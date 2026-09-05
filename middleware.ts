@@ -39,7 +39,6 @@ export async function middleware(request: NextRequest) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-
   const allowed = isAllowedEmail(user?.email);
 
   // Public auth routes always pass so login/logout/reset can work.
@@ -58,8 +57,8 @@ export async function middleware(request: NextRequest) {
         { status: 401 },
       );
     }
-    // Pages: redirect to login. `not_allowed` = signed in but not on the
-    // allowlist; `sign_in` = not signed in at all.
+    // Pages: redirect to login. `not_allowed` = signed in but rejected by the
+    // configured access policy; `sign_in` = not signed in at all.
     const redirectUrl = request.nextUrl.clone();
     redirectUrl.pathname = '/auth/login';
     redirectUrl.search = '';

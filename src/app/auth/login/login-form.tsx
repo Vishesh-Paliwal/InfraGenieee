@@ -38,7 +38,9 @@ function authErrorMessage(error: { code?: string; message?: string }, mode: Mode
 function gateErrorMessage(code: string | null): string | null {
   switch (code) {
     case 'sign_in':
-      return 'Sign in with an authorized account to continue.';
+      return 'Sign in to continue.';
+    case 'not_allowed':
+      return 'This account is not authorized for InfraGenie.';
     case 'access_denied':
       return 'Supabase denied that sign-in attempt. Try again.';
     default:
@@ -153,12 +155,6 @@ export function LoginForm() {
         {gateMessage ? (
           <div className="mb-4 rounded-md border border-destructive/40 bg-destructive/5 p-3 text-sm text-destructive">
             {gateMessage}
-          </div>
-        ) : null}
-        {gateError === 'not_allowed' ? (
-          <div className="mb-4 rounded-md border border-destructive/40 bg-destructive/5 p-3 text-sm text-destructive">
-            This account isn&apos;t authorized for InfraGenie yet. Sign in with an approved email,
-            or contact the owner to request access.
           </div>
         ) : null}
         <div className="mb-4 grid grid-cols-3 rounded-md border bg-muted/30 p-1">

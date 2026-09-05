@@ -27,7 +27,7 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request): Promise<NextResponse> {
-  // 0. Gate: only signed-in, allowlisted users may spend paid LLM calls.
+  // 0. Gate: only signed-in, access-policy-allowed users may spend paid LLM calls.
   const denied = await requireAllowedUser();
   if (denied) return denied;
 

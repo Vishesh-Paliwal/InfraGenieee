@@ -1,34 +1,37 @@
 /**
- * InfraGenie — access allowlist.
+ * InfraGenie access policy.
  *
- * Only these emails may sign in and use the app. Configure via the
- * ALLOWED_EMAILS environment variable (comma-separated). If unset, falls back
- * to the built-in default so the app is never accidentally left wide open.
+ * By default, any signed-in Supabase user can use the app. Set ALLOWED_EMAILS
+ * to comma-separated regex patterns when you want to restrict access again.
  *
- * To add people: set ALLOWED_EMAILS in Vercel → Settings → Environment
- * Variables, e.g. "a@x.com, b@y.com, c@z.com". No redeploy of code needed —
- * just redeploy to pick up the new env value.
+ * Examples:
+ *   ALLOWED_EMAILS=.*@example\.com,admin@gmail\.com
+ *   ALLOWED_EMAILS=alice@example\.com,bob@example\.com
  */
 
-const DEFAULT_ALLOWED = [
-  'visheshpaliwal777@gmail.com',
-  'arjunk.dev2025@gmail.com',
-  'kshirsagararjun20@gmail.com',
-  'Icpcani@gmail.com',
-  'vibhuttv@gmail.com',
-].map((email) => email.toLowerCase());
+const DEFAULT_ALLOWED_EMAIL_PATTERNS = ['.*'];
 
-export function allowedEmails(): string[] {
+export function allowedEmailPatterns(): string[] {
   const raw = process.env.ALLOWED_EMAILS;
-  if (!raw) return DEFAULT_ALLOWED;
-  const list = raw
+  if (!raw) return DEFAULT_ALLOWED_EMAIL_PATTERNS;
+  const patterns = raw
     .split(',')
-    .map((e) => e.trim().toLowerCase())
+    .map((pattern) => pattern.trim())
     .filter(Boolean);
-  return list.length > 0 ? list : DEFAULT_ALLOWED;
+  return patterns.length > 0 ? patterns : DEFAULT_ALLOWED_EMAIL_PATTERNS;
+}
+
+function matchesPattern(email: string, pattern: string): boolean {
+  try {
+    return new RegExp(`^(?:${pattern})$`, 'i').test(email);
+  } catch {
+    return email.toLowerCase() === pattern.toLowerCase();
+  }
 }
 
 export function isAllowedEmail(email: string | null | undefined): boolean {
   if (!email) return false;
-  return allowedEmails().includes(email.trim().toLowerCase());
+  const normalized = email.trim();
+  if (!normalized) return false;
+  return allowedEmailPatterns().some((pattern) => matchesPattern(normalized, pattern));
 }

@@ -4,8 +4,8 @@
  * Defense-in-depth for the paid / data routes. Middleware is the primary gate,
  * but each expensive route ALSO calls this so that a middleware bypass (matcher
  * change, edge case, direct invocation) can never leak paid LLM calls or user
- * data. Returns a 401 NextResponse to short-circuit, or null when the caller
- * may proceed.
+ * data to anonymous or disallowed users. Returns a 401 NextResponse to
+ * short-circuit, or null when the caller may proceed.
  *
  * Usage inside a route handler:
  *
